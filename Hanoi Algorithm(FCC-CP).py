@@ -1,7 +1,6 @@
 def hanoi_solver( num: int ) -> str:
 
-    move: list[list[int]] = [ [] , [] , [] ]
-    move[0] = [digit for digit in reversed(range(1,num + 1))]
+    move: list[list] = [ list(reversed(range(1,num + 1))) , [] , [] ]
 
     direction: dict = {
         'right' : { 0 : 2, 1 : 0, 2 : 1 },
@@ -10,7 +9,7 @@ def hanoi_solver( num: int ) -> str:
     odd_sys  = direction['right'] if num % 2 != 0 else direction['left']
     even_sys = direction['left'] if num % 2 != 0 else direction['right']
 
-    disks: list = [ j + 1 for j in range(num)]
+    disks: list = list(range(1,num + 1))
     output: str = ''
 
     i = 1
@@ -18,10 +17,10 @@ def hanoi_solver( num: int ) -> str:
 
         output += f'{move[ 0 ]} {move[ 1 ]} {move[ 2 ]}'
 
-        if move == [[], [], list(reversed(range(1,num + 1))) ]:
+        if move == [ [], [], list(reversed(range(1,num + 1))) ]:
             return output
-        else:
-            output += '\n'
+
+        output += '\n'
 
         for disk in disks:
             if ((2**disk / 2) + i) % 2**disk == 0:
@@ -39,4 +38,4 @@ def hanoi_solver( num: int ) -> str:
 
 
 
-print(hanoi_solver( 2 ))
+print(hanoi_solver( 18 ))

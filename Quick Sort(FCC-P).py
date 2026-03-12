@@ -1,8 +1,23 @@
-def quick_sort( array: list) -> list:
-    low = 0
-    high = len(array) - 1
-    pivot = (low + high) // 2
+def quick_sort( input_array: list) -> list:
+    array = input_array.copy()
 
-    low_list = array[:pivot]
-    high_list = array[pivot:]
-    middle_list = [element for element in array if element == pivot]
+    if len(array) <= 1:
+        return array
+
+    pivot: int = (( len(array) - 1 ) // 2)
+
+    low_list:  list = [ el for el in array if el <  array[pivot] ]
+    mid_list:  list = [ el for el in array if el == array[pivot] ]
+    high_list: list = [ el for el in array if el >  array[pivot] ]
+
+    low_list  = quick_sort( low_list  )
+    high_list = quick_sort( high_list )
+
+    array: list = low_list + mid_list + high_list
+
+    return array
+
+
+
+lst = [4, 42, 16, 23, 15, 8]
+print(quick_sort( lst ))
