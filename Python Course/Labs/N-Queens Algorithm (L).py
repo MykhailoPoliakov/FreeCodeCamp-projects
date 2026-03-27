@@ -1,66 +1,86 @@
 import copy
 
-def dfs_n_queens( n ) -> list:
+def print_text( output_text, matrix , n ):
+    text = output_text
+    for j in range( n ):
+        text += f"{matrix[j]}\n"
+    print(text)
+
+
+
+def dfs_n_queens( n: int ) -> list:
+
+    # basic solutions
     if n == 1:
         return [[0]]
     if n < 3:
         return []
 
 
+
+    # range n for cycles
+    RANGE: range = range(n)
+
+    # list with final solutions
     output: list = []
-    stack = [[ [ '' for _ in range(n) ] for _ in range(n)],]
+    # main stack
+    stack = [[ [[ '' for _ in RANGE ] for _ in RANGE ],0],]
 
+
+    # iterate through all possible positions
     while stack:
-        matrix: list = stack.pop()
+        # output for testing
+        print("new cycle")
 
-        for row in range(n):
-            for col in range(n):
+        # pop from stack
+        matrix, level = stack.pop()
 
-                if matrix[row][col] in [ 'Q','x' ]:
-                    continue
+        # on next free colon
+        col = level
+        for row in reversed(RANGE):
 
-                new_matrix = copy.deepcopy(matrix)
+            # check if queen can be placed
+            if matrix[row][col] in ['Q', 'x']:
+                continue
 
-                for i in range(n):
-                    new_matrix[row][i] = 'x'
-                    new_matrix[i][col] = 'x'
-                    if col + i in range(n) and row + i in range(n):
-                        new_matrix[row + i][col + i] = 'x'
-                    if col - i in range(n) and row - i in range(n):
-                        new_matrix[row - i][col - i] = 'x'
-                    if col + i in range(n) and row - i in range(n):
-                        new_matrix[row - i][col + i] = 'x'
-                    if col - i in range(n) and row + i in range(n):
-                        new_matrix[row + i][col - i] = 'x'
-                new_matrix[row][col] = 'Q'
+            # place the queen and calculate board
+            new_matrix = copy.deepcopy(matrix)
+            for i in RANGE:
+                # directions
+                new_matrix[row][i] = 'x'
+                new_matrix[i][col] = 'x'
+                # diagonals
+                if row + i in RANGE and col + i in RANGE:
+                    new_matrix[row + i][col + i] = 'x'
+                if row - i in RANGE and col - i in RANGE:
+                    new_matrix[row - i][col - i] = 'x'
+                if row - i in RANGE and col + i in RANGE:
+                    new_matrix[row - i][col + i] = 'x'
+                if row + i in RANGE and col - i in RANGE:
+                    new_matrix[row + i][col - i] = 'x'
+            # place the queen
+            new_matrix[row][col] = 'Q'
 
-                count: int = 0
-                save = True
-                for em_row in range(n):
-                    if '' in new_matrix[em_row]:
-                        stack.append(copy.deepcopy(new_matrix))
-                        save = False
-                        break
-                    if 'Q' in new_matrix[em_row]:
-                        count += 1
+            # append to stack
+            if level < n - 1:
+                stack.append([copy.deepcopy(new_matrix), level + 1])
 
-                if save and count == n:
+                # output for testing
+                print_text(f' append, level : {level}\n', new_matrix, n)
+                continue
 
-                    output_list = []
-                    for f_row in range(n):
-                        for f_col in range(n):
-                            if new_matrix[f_row][f_col] == 'Q':
-                                output_list.append(f_col)
 
-                    if output_list not in output:
+            # append final result
+            result = [f_row for f_col in range(n) for f_row in range(n) if new_matrix[f_row][f_col] == 'Q']
+            output.append(result)
 
-                        print_text = ''
-                        for j in range(n):
-                            print_text += f"{new_matrix[j]}\n"
-                        print(print_text)
+            # output for testing
+            print_text(f' output, level : {level}\n', new_matrix, n)
+            break
 
-                        output.append( output_list )
 
     return output
 
-print(len(dfs_n_queens( 8 )))
+
+
+print( dfs_n_queens( 8 ) )
